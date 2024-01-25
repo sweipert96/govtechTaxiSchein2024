@@ -1,7 +1,31 @@
 {
-  "id": "MandantId:CustomerName_ProcessName_ApplicantForm:v1.0",
+  "id": "102:Taxi_Schein_ApplicantForm:v1.0",
   "title": "",
-  "sections": [],
+  "sections": [
+    {
+      "title": "",
+      "fieldGroups": [
+        {
+          "title": "",
+          "rows": [
+            {
+              "fields": [
+                {
+                  "id": "vorname",
+                  "label": "Vorname",
+                  "type": "STRING",
+                  "width": 12,
+                  "validationRules": [],
+                  "required": true
+                }
+              ]
+            }
+          ],
+          "id": "fgName"
+        }
+      ]
+    }
+  ],
   "source": {
     "service": "prozess",
     "variableName": "applicantForm"
