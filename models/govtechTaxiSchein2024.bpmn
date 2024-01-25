@@ -9,7 +9,6 @@
 // "xmlns" attribute, which would later lead to the very confusing
 // "Unexpected character" exception when trying to deploy the model.</script>
     </scriptTask>
-    <userTask id="applicantForm" name="Taxi-Schein beantragen" activiti:assignee="${startParameter.startedByUser.userId}" activiti:formKey="formular:102:Taxi_Schein_ApplicantForm:v1.0"></userTask>
     <sequenceFlow id="flow1" sourceRef="processStart" targetRef="init"></sequenceFlow>
     <scriptTask id="generateSummary" name="Zusammenfassung generieren" scriptFormat="groovy" activiti:autoStoreVariables="false">
       <script>// This code will be replaced by the build script. It is important
@@ -24,9 +23,6 @@
     <sequenceFlow id="flow16" sourceRef="summaryForm" targetRef="exclusivegateway4"></sequenceFlow>
     <sequenceFlow id="flow17" sourceRef="exclusivegateway4" targetRef="setupPayment">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${clickedButton == "continue"}]]></conditionExpression>
-    </sequenceFlow>
-    <sequenceFlow id="flow18" name="&quot;Angaben korrigieren&quot;" sourceRef="exclusivegateway4" targetRef="applicantForm">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${clickedButton == "back"}]]></conditionExpression>
     </sequenceFlow>
     <userTask id="payment" name="Bezahlung" activiti:assignee="${startParameter.startedByUser.userId}" activiti:formKey="payment">
       <extensionElements>
@@ -44,63 +40,18 @@
 // "Unexpected character" exception when trying to deploy the model.</script>
     </scriptTask>
     <sequenceFlow id="flow19" sourceRef="setupPayment" targetRef="payment"></sequenceFlow>
-    <sequenceFlow id="flow20" sourceRef="payment" targetRef="createPdf"></sequenceFlow>
-    <serviceTask id="createPdf" name="PDF generieren" activiti:class="de.seitenbau.serviceportal.prozess.servicetask.PdfErstellenService">
-      <extensionElements>
-        <activiti:field name="source">
-          <activiti:expression><![CDATA[${applicantForm}]]></activiti:expression>
-        </activiti:field>
-        <activiti:field name="target">
-          <activiti:expression><![CDATA[applicantFormAsPdf]]></activiti:expression>
-        </activiti:field>
-      </extensionElements>
-    </serviceTask>
     <endEvent id="endevent2" name="End"></endEvent>
-    <serviceTask id="sendMessageToApplicant" name="Nachricht an Nutzerkonto Bund schicken" activiti:class="de.seitenbau.serviceportal.prozess.servicetask.NachrichtVersendenService">
-      <extensionElements>
-        <activiti:field name="empfaenger">
-          <activiti:expression><![CDATA[${startParameter.startedByUser.postfachHandle}]]></activiti:expression>
-        </activiti:field>
-        <activiti:field name="betreff">
-          <activiti:string><![CDATA[Taxi-Schein beantragen: Antrag eingegangen]]></activiti:string>
-        </activiti:field>
-        <activiti:field name="text">
-          <activiti:expression><![CDATA[Guten Tag,
-
-Ihr Antrag auf einen Taxi-Schein wurde erfolgreich an die zuständige Stelle übertragen. 
-
-Im Anhang finden Sie eine Kopie Ihrer gemachten Angaben als PDF-Datei.
-]]></activiti:expression>
-        </activiti:field>
-        <activiti:field name="anhaenge">
-          <activiti:expression><![CDATA[${applicantFormAsPdf}]]></activiti:expression>
-        </activiti:field>
-      </extensionElements>
-    </serviceTask>
-    <sequenceFlow id="flow28" sourceRef="sendMessageToApplicant" targetRef="finalPage"></sequenceFlow>
-    <userTask id="finalPage" name="Antrag auf Ihren Taxi-Schein eingegangen" activiti:assignee="${startParameter.startedByUser.userId}" activiti:formKey="showOnce">
-      <documentation>Ihr Antrag wurde erfolgreich an die zuständige Stelle übertragen.
-
-Sie können diese Seite nun schließen.</documentation>
-    </userTask>
-    <sequenceFlow id="flow29" sourceRef="finalPage" targetRef="endevent2"></sequenceFlow>
-    <sequenceFlow id="flow30" sourceRef="createPdf" targetRef="sendMessageToApplicant"></sequenceFlow>
-    <sequenceFlow id="flow31" sourceRef="applicantForm" targetRef="generateSummary"></sequenceFlow>
-    <sequenceFlow id="flow32" sourceRef="init" targetRef="applicantForm"></sequenceFlow>
-    <textAnnotation id="textannotation4">
-      <text>Antragsformular</text>
-    </textAnnotation>
-    <association id="association4" sourceRef="textannotation4" targetRef="applicantForm"></association>
     <textAnnotation id="textannotation6">
       <text>Zusammenfassung-Seite</text>
     </textAnnotation>
     <association id="association6" sourceRef="textannotation6" targetRef="usertask1"></association>
     <association id="association7" sourceRef="textannotation6" targetRef="summaryForm"></association>
-    <textAnnotation id="textannotation12">
-      <text>Abschlussseite</text>
+    <textAnnotation id="textannotation7">
+      <text>Wie können wir ein Formular einbinden?</text>
     </textAnnotation>
-    <association id="association14" sourceRef="textannotation12" targetRef="usertask1"></association>
-    <association id="association15" sourceRef="textannotation12" targetRef="finalPage"></association>
+    <textAnnotation id="textannotation8">
+      <text>Was passiert nach der Bezahlung?</text>
+    </textAnnotation>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_m102.govtechTaxiSchein2024">
     <bpmndi:BPMNPlane bpmnElement="m102.govtechTaxiSchein2024" id="BPMNPlane_m102.govtechTaxiSchein2024">
@@ -109,9 +60,6 @@ Sie können diese Seite nun schließen.</documentation>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="init" id="BPMNShape_init">
         <omgdc:Bounds height="60.0" width="100.0" x="571.0" y="184.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="applicantForm" id="BPMNShape_applicantForm">
-        <omgdc:Bounds height="60.0" width="100.0" x="701.0" y="184.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="generateSummary" id="BPMNShape_generateSummary">
         <omgdc:Bounds height="60.0" width="100.0" x="830.0" y="187.0"></omgdc:Bounds>
@@ -128,26 +76,17 @@ Sie können diese Seite nun schließen.</documentation>
       <bpmndi:BPMNShape bpmnElement="setupPayment" id="BPMNShape_setupPayment">
         <omgdc:Bounds height="60.0" width="100.0" x="1199.0" y="186.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="createPdf" id="BPMNShape_createPdf">
-        <omgdc:Bounds height="55.0" width="105.0" x="1470.0" y="189.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="endevent2" id="BPMNShape_endevent2">
-        <omgdc:Bounds height="35.0" width="35.0" x="1962.0" y="199.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="sendMessageToApplicant" id="BPMNShape_sendMessageToApplicant">
-        <omgdc:Bounds height="55.0" width="137.0" x="1619.0" y="189.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="finalPage" id="BPMNShape_finalPage">
-        <omgdc:Bounds height="60.0" width="100.0" x="1802.0" y="187.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="textannotation4" id="BPMNShape_textannotation4">
-        <omgdc:Bounds height="50.0" width="100.0" x="640.0" y="60.0"></omgdc:Bounds>
+        <omgdc:Bounds height="35.0" width="35.0" x="1580.0" y="201.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="textannotation6" id="BPMNShape_textannotation6">
         <omgdc:Bounds height="50.0" width="100.0" x="980.0" y="30.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="textannotation12" id="BPMNShape_textannotation12">
-        <omgdc:Bounds height="50.0" width="100.0" x="1802.0" y="55.0"></omgdc:Bounds>
+      <bpmndi:BPMNShape bpmnElement="textannotation7" id="BPMNShape_textannotation7">
+        <omgdc:Bounds height="50.0" width="100.0" x="690.0" y="194.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="textannotation8" id="BPMNShape_textannotation8">
+        <omgdc:Bounds height="50.0" width="100.0" x="1460.0" y="192.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
         <omgdi:waypoint x="538.0" y="213.0"></omgdi:waypoint>
@@ -165,54 +104,13 @@ Sie können diese Seite nun schließen.</documentation>
         <omgdi:waypoint x="1170.0" y="215.0"></omgdi:waypoint>
         <omgdi:waypoint x="1199.0" y="216.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow18" id="BPMNEdge_flow18">
-        <omgdi:waypoint x="1150.0" y="195.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1150.0" y="129.0"></omgdi:waypoint>
-        <omgdi:waypoint x="750.0" y="129.0"></omgdi:waypoint>
-        <omgdi:waypoint x="751.0" y="184.0"></omgdi:waypoint>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="42.0" width="100.0" x="869.0" y="105.0"></omgdc:Bounds>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow19" id="BPMNEdge_flow19">
         <omgdi:waypoint x="1299.0" y="216.0"></omgdi:waypoint>
         <omgdi:waypoint x="1339.0" y="217.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow20" id="BPMNEdge_flow20">
-        <omgdi:waypoint x="1439.0" y="217.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1470.0" y="216.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow28" id="BPMNEdge_flow28">
-        <omgdi:waypoint x="1756.0" y="216.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1802.0" y="217.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow29" id="BPMNEdge_flow29">
-        <omgdi:waypoint x="1902.0" y="217.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1962.0" y="216.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow30" id="BPMNEdge_flow30">
-        <omgdi:waypoint x="1575.0" y="216.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1619.0" y="216.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow31" id="BPMNEdge_flow31">
-        <omgdi:waypoint x="801.0" y="214.0"></omgdi:waypoint>
-        <omgdi:waypoint x="830.0" y="217.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow32" id="BPMNEdge_flow32">
-        <omgdi:waypoint x="671.0" y="214.0"></omgdi:waypoint>
-        <omgdi:waypoint x="701.0" y="214.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="association4" id="BPMNEdge_association4">
-        <omgdi:waypoint x="690.0" y="110.0"></omgdi:waypoint>
-        <omgdi:waypoint x="751.0" y="184.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="association7" id="BPMNEdge_association7">
         <omgdi:waypoint x="1030.0" y="80.0"></omgdi:waypoint>
         <omgdi:waypoint x="1030.0" y="183.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="association15" id="BPMNEdge_association15">
-        <omgdi:waypoint x="1852.0" y="105.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1852.0" y="187.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

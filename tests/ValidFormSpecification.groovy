@@ -5,7 +5,6 @@ class ValidFormSpecification extends Specification {
   def "Verify form is valid"() {
     when:
     List<String> forms = [
-            "Taxi_Schein_ApplicantForm-v1.0-de.json",
             "Taxi_Schein_SummaryForm-v1.0-de.json",
     ]
     forms.each { form ->
